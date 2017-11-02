@@ -6,11 +6,11 @@
 struct Material
 {
     glm::vec3 color; ///< Base color
-	double ka; ///< Ambient contribution
-	double kd; ///< Diffuse constant
-	double ks; ///< Specular constant
-	double kr; ///< Contribution from reflection
-	double kt; ///< Contribution from refraction
+	float ka; ///< Ambient contribution
+	float kd; ///< Diffuse constant
+	float ks; ///< Specular constant
+	float kr; ///< Contribution from reflection
+	float kt; ///< Contribution from refraction
 };
 
 #endif

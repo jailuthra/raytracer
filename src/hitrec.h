@@ -5,12 +5,14 @@
 #include <glm/vec3.hpp>
 
 class HitRec {
-    bool hit; ///> Did ray it anything yet
-    double t; ///> Ray parameter of hit point
-    Surface *s; ///> Closest surface it hit
-    glm::vec3 normal; ///> Object normal at hit pt.
-    Ray *r; ///> Ray (optional)
-    glm::vec3 p; ///> Hit point (optional)
+public:
+    bool hit = false; ///> Did ray hit anything yet
+    float t = -10; ///> Ray parameter of hit point
+    Surface *s = NULL; ///> Closest surface it hit
+    glm::vec3 normal = glm::vec3(0); ///> Object normal at hit pt.
+    Ray *r = NULL; ///> Ray
+    glm::vec3 p; ///> Hit point
+    glm::vec3 getHitPoint() { return r->origin + t * r->dir; }
 };
 
 #endif

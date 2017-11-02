@@ -1,6 +1,6 @@
 #include "camera.h"
-#include <glm/geometry.hpp>
-#include <glm/trignometric.hpp>
+#include <glm/geometric.hpp>
+#include <glm/trigonometric.hpp>
 
 Camera::Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up,
                float fov_y, int width,
@@ -18,8 +18,8 @@ Camera::Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up,
 
 glm::vec3 Camera::getRayDir(int i, int j) const
 {
-    double z = focalDistance;
-    double x = aspect * (i - width/2.0 + 0.5) / width;
-    double y = (j - height/2.0 + 0.5) / height;
-    return glm::normalize(glm::vec3(x * u, y * v, z * (-w)));
+    float z = focalDistance;
+    float x = aspect * (i - width/2.0 + 0.5) / width;
+    float y = (j - height/2.0 + 0.5) / height;
+    return glm::normalize((x * u) + (y * v) + (z * (-w)));
 }

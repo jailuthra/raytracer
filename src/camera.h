@@ -17,6 +17,7 @@ public:
     Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up,
            float fov_y, int width, int height);
     glm::vec3 getRayDir(int i, int j) const;
+    glm::vec3 getPos() { return pos; }
 };
 
 #endif

@@ -1,4 +1,4 @@
-#include "world.cpp"
+#include "world.h"
 
 bool World::hit(const Ray &ray, double t0, double t1, HitRec &hr)
 {

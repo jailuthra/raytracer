@@ -5,7 +5,9 @@
 #include <glm/vec3.hpp>
 
 #include "surface.h"
+#include "ray.h"
 #include "lightsrc.h"
+#include "hitrec.h"
 
 class World {
 public:
