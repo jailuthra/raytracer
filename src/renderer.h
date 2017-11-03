@@ -21,6 +21,6 @@ public:
         pixmap = new glm::vec3 [camera->width * camera->height];
     }
     ~Renderer() { delete pixmap; }
-	bool renderLoop();
+	void render(const char *fn);
 };
 #endif

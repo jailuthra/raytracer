@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "utils.h"
 #include <cfloat>
 #include <glm/glm.hpp>
 
@@ -39,7 +40,12 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
     }
 }
 
-bool renderLoop()
+void Renderer::render(const char *filename)
 {
-    return true;
+    for (int j = 0; j < camera->height; j++) {
+        for (int i = 0; i < camera->width; i++) {
+            pixmap[i + j*camera->width] = shade(i, j);
+        }
+    }
+    makePPM(filename, pixmap, camera->width, camera->height);
 }
