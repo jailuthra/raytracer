@@ -9,7 +9,7 @@ struct Material
 	float ka; ///< Ambient contribution
 	float kd; ///< Diffuse constant
 	float ks; ///< Specular constant
-	float kr; ///< Contribution from reflection
+	float km; ///< Contribution from reflection
 	float kt; ///< Contribution from refraction
 };
 

@@ -26,15 +26,16 @@ glm::vec3 Renderer::shade(int i, int j)
 
 glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
 {
+    static int depth = 0; // used for reflections
     HitRec rec;
-    glm::vec3 col; // return color
+    glm::vec3 col(0); // return color
     rec.r = &ray;
     if (world->hit(ray, t0, t1, rec)) {
         Material *m = rec.s->mat;
         rec.p = rec.getHitPoint(); // hit point
         rec.normal = glm::normalize(rec.s->getNormal(rec.p)); // normal
         glm::vec3 v = glm::normalize(ray.origin - rec.p); // view vector
-        col = m->ka * m->color; // ambient
+        col += m->ka * m->color; // ambient
         for (LightSrc *l: world->sources) {
             glm::vec3 i = glm::normalize(l->pos - rec.p); // incident
             glm::vec3 h = glm::normalize(v + i);
@@ -48,8 +49,18 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                 col += (l->intensity * m->color) * m->ks * phong;
             }
         }
-        return col;
+        // reflect if needed
+        if (m->km == 0 || depth == MAX_DEPTH) {
+            depth = 0;
+        } else {
+            col += m->km * raycolor(Ray(rec.p,
+                                        glm::reflect(-v, rec.normal)),
+                                    1e-2, FLT_MAX);
+        }
+        depth++;
+        return glm::clamp(col, 0.0f, 1.0f);
     } else {
+        depth = 0;
         return world->bgcol;
     }
 }

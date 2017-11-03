@@ -5,7 +5,7 @@
 #include "camera.h"
 #include <cstdlib>
 
-#define EPSILON 1e-5
+#define EPSILON 1e-3
 
 class Renderer {
 private:
@@ -14,6 +14,7 @@ private:
     glm::vec3 *pixmap;
 	glm::vec3 shade(int i, int j);
     glm::vec3 raycolor(Ray ray, double t0, double t1);
+    const int MAX_DEPTH = 4;
     float eps() { return static_cast <float> (rand())
                        / static_cast <float> (RAND_MAX);}
     bool antialiase;
