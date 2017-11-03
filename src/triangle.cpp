@@ -9,35 +9,29 @@ bool Triangle::hit(const Ray &ray, double t0, double t1, HitRec &hr){
     glm::vec3 dir = ray.dir;
     glm::vec3 origin = ray.origin;
 
-    glm::mat3 A_mat = glm::mat3(v1 - v2, v1- v3, dir);
-    glm::mat3 beta_mat = glm::mat3(v1 - origin, v1 - v3, dir);
-    glm::mat3 gamma_mat = glm::mat3(v1 - v2, v1 - origin, dir);
-    glm::mat3 t_mat = glm::mat3(v1 - v2, v1 - v3, v1 - origin);
+    double det_A = glm::determinant(glm::mat3(v1 - v2, v1 - v3, dir));
+    double t = glm::determinant(glm::mat3(v1 - v2, v1 - v3, v1 - origin)) / det_A;
 
-    double det_A = glm::determinant(A_mat);
-    double beta = glm::determinant(beta_mat) / det_A;
-    double gamma = glm::determinant(gamma_mat) / det_A;
-    double t = glm::determinant(t_mat) / det_A;
+    if(t > t1 || t < t0)
+        return false;
 
-    if(beta > 0 && gamma > 0){
-        if(beta + gamma < 1){
+    double gamma = glm::determinant(glm::mat3(v1 - v2, v1 - origin, dir)) / det_A;
 
-            if(t < t1 && t > t0){
-                hr.hit = true;
-                hr.t = t;
-                hr.s = this;    
-                stat = true;
-            }
-        }
-    }
+    if(gamma < 0 || gamma > 1)
+        return false;
+    
+    double beta = glm::determinant(glm::mat3(v1 - origin, v1 - v3, dir)) / det_A;
 
-    return stat;
+    if(beta < 0 || beta > (1 - gamma))
+        return false;
+
+    hr.hit = true;
+    hr.t = t;
+    hr.s = this;
+
+    return true;
 }
 
-glm::vec3 Triangle::getNormal(glm::vec3 hitpoint) const{
-    glm::vec3 e1 = v2 - v1;
-    glm::vec3 e2 = v1 - v3;
-    glm::vec3 normal = glm::normalize(glm::cross(e1, e2));
-    
+glm::vec3 Triangle::getNormal(glm::vec3 hitpoint) const{    
     return normal;
 }
