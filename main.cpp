@@ -2,6 +2,7 @@
 #include "src/world.h"
 #include "src/camera.h"
 #include "src/sphere.h"
+#include "src/triangle.h"
 #include <glm/vec3.hpp>
 
 int main()
@@ -29,6 +30,17 @@ int main()
     //Object *triangle = new Triangle(Vector3D(2,0,0), Vector3D(-1,0,4), Vector3D(0,3,0), m);
     world->addObject(sphere);
     //world->addObject(triangle);
+
+    // Floor 
+	Material *fm = new Material;
+	fm->color = glm::vec3(0.2, 0.2, 0.2);
+    fm->ks = 0.0;
+	fm->ka = 0.4;
+	fm->kd = 0.6;
+    Surface *floor = new Triangle(glm::vec3(800,-1.52,200),
+                                  glm::vec3(-800,-1.52,200),
+                                  glm::vec3(0,-1.52,-900), fm);
+    world->addObject(floor);
 
 	LightSrc *light = new LightSrc;
     light->pos = glm::vec3(10, 10, 10);

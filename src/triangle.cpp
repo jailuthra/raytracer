@@ -1,6 +1,7 @@
 #include "triangle.h"
 #include "hitrec.h"
 #include <glm/glm.hpp>
+#include <iostream>
 
 bool Triangle::hit(const Ray &ray, double t0, double t1, HitRec &hr){
     bool stat = false;
@@ -10,7 +11,7 @@ bool Triangle::hit(const Ray &ray, double t0, double t1, HitRec &hr){
 
     glm::mat3 A_mat = glm::mat3(v1 - v2, v1- v3, dir);
     glm::mat3 beta_mat = glm::mat3(v1 - origin, v1 - v3, dir);
-    glm::mat3 gamma_mat = glm::mat3(v1 - v2, v1 - v3, v1 - origin);
+    glm::mat3 gamma_mat = glm::mat3(v1 - v2, v1 - origin, dir);
     glm::mat3 t_mat = glm::mat3(v1 - v2, v1 - v3, v1 - origin);
 
     double det_A = glm::determinant(A_mat);
