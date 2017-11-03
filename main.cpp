@@ -5,7 +5,7 @@
 #include "src/triangle.h"
 #include <glm/vec3.hpp>
 
-int main()
+int main(int argc, char **argv)
 {
     int screen_width = 800, screen_height = 600;
 
@@ -47,8 +47,12 @@ int main()
     light->intensity = glm::vec3(1, 1, 1);
 	world->addSource(light);
 
-	Renderer *engine = new Renderer(world, camera);
-    engine->render("out.pbm");
+	Renderer *engine = new Renderer(world, camera, false);
+    char *fn = (char *) "out.ppm";
+    if (argc > 1) {
+        fn = argv[1];     
+    }
+    engine->render(fn);
 
     return 0;
 }

@@ -3,6 +3,7 @@
 
 #include "world.h"
 #include "camera.h"
+#include <cstdlib>
 
 #define EPSILON 1e-5
 
@@ -13,11 +14,16 @@ private:
     glm::vec3 *pixmap;
 	glm::vec3 shade(int i, int j);
     glm::vec3 raycolor(Ray ray, double t0, double t1);
-
+    float eps() { return static_cast <float> (rand())
+                       / static_cast <float> (RAND_MAX);}
+    bool antialiase;
 public:
-	Renderer(World *world, Camera *camera) : world(world),
-                                             camera(camera)
+	Renderer(World *world, Camera *camera, bool aa = false)
+                                           : world(world),
+                                             camera(camera),
+                                             antialiase(aa)
     {
+        srand (static_cast <unsigned> (time(0)));
         pixmap = new glm::vec3 [camera->width * camera->height];
     }
     ~Renderer() { delete pixmap; }
