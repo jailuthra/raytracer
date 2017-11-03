@@ -4,6 +4,9 @@
 # Build Dir
 build/
 
+#Bin dir
+bin/
+
 # Prerequisites
 *.d
 
