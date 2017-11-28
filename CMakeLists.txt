@@ -4,6 +4,7 @@ project(${AssignmentNameHere})
 
 set(CMAKE_CXX_STANDARD 11)
 #file(GLOB DEPS_SOURCES ext/glad/src/glad.c)
+set(CMAKE_CXX_FLAGS "-Wall -O3")
 macro(pre_build TARGET_NAME)
     add_custom_target( ${TARGET_NAME}_PRE_BUILD ALL )
     message("STATUS" "current source dir in macro " ${CMAKE_CURRENT_SOURCE_DIR})

@@ -13,7 +13,7 @@ private:
     float focalDistance; ///< Distance of camera from screen
     float aspect; ///< width/height
 public:
-    const int height, width;
+    const int width, height;
     Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up,
            float fov_y, int width, int height);
     glm::vec3 getRayDir(float i, float j) const;

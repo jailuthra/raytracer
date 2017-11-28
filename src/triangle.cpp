@@ -4,8 +4,6 @@
 #include <iostream>
 
 bool Triangle::hit(const Ray &ray, double t0, double t1, HitRec &hr){
-    bool stat = false;
-
     glm::vec3 dir = ray.dir;
     glm::vec3 origin = ray.origin;
 

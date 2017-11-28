@@ -14,7 +14,7 @@ Camera::Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up,
     u = glm::normalize(glm::cross(up, w));
     v = glm::normalize(glm::cross(w, u));
     aspect = ((float) width) / ((float) height);
-    focalDistance = 1.0f/(2.0f * glm::tan(glm::radians(fov_y / 2.0f)));
+    focalDistance = 1.0f/(2.0f * glm::tan(glm::radians(this->fov_y / 2.0f)));
 }
 
 glm::vec3 Camera::getRayDir(float i, float j) const

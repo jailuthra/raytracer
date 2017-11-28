@@ -3,7 +3,6 @@
 #include "src/camera.h"
 #include "src/sphere.h"
 #include "src/triangle.h"
-#include "src/quad.h"
 #include <glm/vec3.hpp>
 
 int main(int argc, char **argv)
@@ -89,6 +88,8 @@ int main(int argc, char **argv)
     LightSrc *light = new LightSrc;
     light->pos = glm::vec3(10, 10, 10);
     light->intensity = glm::vec3(1, 1, 1);
+    light->a = glm::vec3(2, -1.5, -1.5);
+    light->b = glm::vec3(-2, -1.5, -1.5);
     world->addSource(light);
 
     Renderer *engine = new Renderer(world, camera, true);
