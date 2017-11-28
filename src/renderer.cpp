@@ -64,7 +64,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
 
             shadowCol /= 9; // Divide total shadow color by number of light sources
             col += shadowCol;
-            
+
             // glm::vec3 i = glm::normalize(l->pos - rec.p); // incident
             // glm::vec3 h = glm::normalize(v + i);
             // /* CHECK IF POINT ISN'T IN SHADOW */
@@ -81,9 +81,28 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
         if (m->km == 0 || depth == MAX_DEPTH) {
             depth = 0;
         } else {
-            col += m->km * raycolor(Ray(rec.p,
-                                        glm::reflect(-v, rec.normal)),
+            glm::vec3 reflectedDir = glm::reflect(-v, rec.normal); //Reflected ray direction
+
+            /*Create orthonormal basis with w = reflected ray*/
+            glm::vec3 w = glm::normalize(reflectedDir);
+            glm::vec3 t = glm::vec3(w.x, w.y, w.z + 1.0f); //Pick random vector not collinear with w
+            glm::vec3 u = glm::normalize(glm::cross(t, w));
+            glm::vec3 v = glm::normalize(glm::cross(w, u));
+
+            float a = 0.10; //Sampling on square of width a units
+
+            /*Choose random point (sampleX,sampleY) on square*/
+            float sampleX = -(a/2) + (eps() * a);
+            float sampleY = -(a/2) + (eps() * a);
+
+            /*Calculate perturbed reflected ray direction*/
+            glm::vec3 perturbReflectedDir = glm::normalize(reflectedDir + (u * sampleX) + (v * sampleY));
+
+            /*Check if new reflected ray is above surface and calculate the color*/
+            if(glm::dot(perturbReflectedDir, rec.normal) >= 0){
+                col += m->km * raycolor(Ray(rec.p, perturbReflectedDir),
                                     1e-2, FLT_MAX);
+            }
         }
         depth++;
         return glm::clamp(col, 0.0f, 1.0f);

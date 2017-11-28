@@ -3,6 +3,7 @@
 #include "src/camera.h"
 #include "src/sphere.h"
 #include "src/triangle.h"
+#include "src/quad.h"
 #include <glm/vec3.hpp>
 
 int main(int argc, char **argv)
@@ -10,7 +11,7 @@ int main(int argc, char **argv)
     int screen_width = 800, screen_height = 600;
 
     // Camera
-    glm::vec3 camera_position(0, 10, 10);
+    glm::vec3 camera_position(0, 10, 20);
     glm::vec3 camera_target(0, 0, 0); //Looking down -Z axis
     glm::vec3 camera_up(0, 1, 0);
     float camera_fovy =  45;
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
     m2->ka = 0.2;
     m2->kd = 0.6;
 
-    Surface *sphere2 = new Sphere(glm::vec3(-2, 1, 2), 0.5, m2);
+    Surface *sphere2 = new Sphere(glm::vec3(-2, 0.1, 2), 0.5, m2);
     world->addObject(sphere2);
 
     // Floor 
@@ -49,22 +50,22 @@ int main(int argc, char **argv)
     fm->ks = 0.2;
     fm->ka = 0.1;
     fm->kd = 0.7;
-    // Surface *floorTriangle1 = new Triangle(glm::vec3(-20,-2,10),
-    //                               glm::vec3(-20,-2,-10),
-    //                               glm::vec3(20,-2,10), fm);
+    Surface *floorTriangle1 = new Triangle(glm::vec3(-10,-2,10),
+                                  glm::vec3(-10,-2,-10),
+                                  glm::vec3(10,-2,10), fm);
 
-    // Surface *floorTriangle2 = new Triangle(glm::vec3(20,-2,10),
-    //                               glm::vec3(20,-2,-10),
-    //                               glm::vec3(-20,-2,-10), fm);
+    Surface *floorTriangle2 = new Triangle(glm::vec3(10,-2,10),
+                                  glm::vec3(-10,-2,-10),
+                                  glm::vec3(10,-2,-10), fm);
 
+    world->addObject(floorTriangle1);
+    world->addObject(floorTriangle2);
 
-    Surface *floor = new Triangle(glm::vec3(800,-1.52,200),
-                                  glm::vec3(-800,-1.52,200),
-                                  glm::vec3(0,-1.52,-900), fm);
+    // Surface *floor = new Triangle(glm::vec3(800,-1.52,200),
+    //                               glm::vec3(-800,-1.52,200),
+    //                               glm::vec3(0,-1.52,-900), fm);
 
-    world->addObject(floor);
-    // world->addObject(floorTriangle1);
-    // world->addObject(floorTriangle2);
+    // // world->addObject(floor);
 
 /*    Material *wm = new Material;
     wm->color = glm::vec3(0.4, 0.4, 0.4);
