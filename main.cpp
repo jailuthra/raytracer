@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     int screen_width = 800, screen_height = 600;
 
     // Camera
-    glm::vec3 camera_position(0, 10, 20);
+    glm::vec3 camera_position(0, 10, 10);
     glm::vec3 camera_target(0, 0, 0); //Looking down -Z axis
     glm::vec3 camera_up(0, 1, 0);
     float camera_fovy =  45;
