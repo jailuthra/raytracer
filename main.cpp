@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     int screen_width = 800, screen_height = 600;
 
     // Camera
-    glm::vec3 camera_position(0, 0, 10);
+    glm::vec3 camera_position(0, 10, 20);
     glm::vec3 camera_target(0, 0, 0); //Looking down -Z axis
     glm::vec3 camera_up(0, 1, 0);
     float camera_fovy =  45;
@@ -32,6 +32,16 @@ int main(int argc, char **argv)
     world->addObject(sphere);
     //world->addObject(triangle);
 
+    Material *m2 = new Material;
+    m2->color = glm::vec3(0.8, 0.1, 0.2);
+    m2->km = 0;
+    m2->ks = 0.4;
+    m2->ka = 0.2;
+    m2->kd = 0.6;
+
+    Surface *sphere2 = new Sphere(glm::vec3(-2, 1, 2), 0.5, m2);
+    world->addObject(sphere2);
+
     // Floor 
     Material *fm = new Material;
     fm->color = glm::vec3(0.2, 0.2, 0.2);
@@ -39,10 +49,41 @@ int main(int argc, char **argv)
     fm->ks = 0.2;
     fm->ka = 0.1;
     fm->kd = 0.7;
+    // Surface *floorTriangle1 = new Triangle(glm::vec3(-20,-2,10),
+    //                               glm::vec3(-20,-2,-10),
+    //                               glm::vec3(20,-2,10), fm);
+
+    // Surface *floorTriangle2 = new Triangle(glm::vec3(20,-2,10),
+    //                               glm::vec3(20,-2,-10),
+    //                               glm::vec3(-20,-2,-10), fm);
+
+
     Surface *floor = new Triangle(glm::vec3(800,-1.52,200),
                                   glm::vec3(-800,-1.52,200),
                                   glm::vec3(0,-1.52,-900), fm);
+
     world->addObject(floor);
+    // world->addObject(floorTriangle1);
+    // world->addObject(floorTriangle2);
+
+/*    Material *wm = new Material;
+    wm->color = glm::vec3(0.4, 0.4, 0.4);
+    wm->km = 0.2;
+    wm->ks = 0.2;
+    wm->ka = 0.1;
+    wm->kd = 0.7;
+
+    Surface *leftface1 = new Triangle(glm::vec3(-20,20,10),
+                                  glm::vec3(-20,-20,10),
+                                  glm::vec3(-20,20,-10), wm);
+    Surface *leftface2 = new Triangle(glm::vec3(-20,20,-10),
+                                  glm::vec3(-20,-20,10),
+                                  glm::vec3(-20,-20,-10), wm); 
+
+    world->addObject(leftface1);
+    world->addObject(leftface2);*/
+
+
 
     LightSrc *light = new LightSrc;
     light->pos = glm::vec3(10, 10, 10);

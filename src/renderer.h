@@ -24,7 +24,7 @@ public:
                                              camera(camera),
                                              antialiase(aa)
     {
-        srand (static_cast <unsigned> (time(0)));
+        // srand (static_cast <unsigned> (time(0)));
         pixmap = new glm::vec3 [camera->width * camera->height];
     }
     ~Renderer() { delete pixmap; }

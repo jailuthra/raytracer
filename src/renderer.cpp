@@ -37,17 +37,45 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
         glm::vec3 v = glm::normalize(ray.origin - rec.p); // view vector
         col += m->ka * m->color; // ambient
         for (LightSrc *l: world->sources) {
-            glm::vec3 i = glm::normalize(l->pos - rec.p); // incident
-            glm::vec3 h = glm::normalize(v + i);
-            /* CHECK IF POINT ISN'T IN SHADOW */
-            HitRec srec;
-            if (!world->hit(Ray(rec.p, i), t0, t1, srec)) {
-                float lambert = glm::max(0.f, glm::dot(rec.normal, i)); 
-                float phong = glm::pow(glm::max(0.f, glm::dot(rec.normal, h)),
-                                       32);
-                col += (l->intensity * m->color) * m->kd * lambert;
-                col += (l->intensity * m->color) * m->ks * phong;
+
+            /* SOFT SHADOWS */
+            glm::vec3 shadowCol(0);
+            for(int p = 0; p < 3; p++){
+                for(int q = 0; q < 3; q++){
+                    glm::vec3 subLightSrc = glm::vec3(
+                                                        (l->pos).x - 1.5 + (p + eps()), 
+                                                        (l->pos).y, 
+                                                        (l->pos).z - 1.5 + (q + eps())
+                                                        );
+
+                    glm::vec3 i = glm::normalize(subLightSrc - rec.p);
+                    glm::vec3 h = glm::normalize(v + i);
+
+                    HitRec srec;
+                    if (!world->hit(Ray(rec.p, i), t0, t1, srec)) {
+                        float lambert = glm::max(0.f, glm::dot(rec.normal, i)); 
+                        float phong = glm::pow(glm::max(0.f, glm::dot(rec.normal, h)),
+                                               32);
+                        shadowCol += (l->intensity * m->color) * m->kd * lambert;
+                        shadowCol += (l->intensity * m->color) * m->ks * phong;
+                    }
+                }
             }
+
+            shadowCol /= 9; // Divide total shadow color by number of light sources
+            col += shadowCol;
+            
+            // glm::vec3 i = glm::normalize(l->pos - rec.p); // incident
+            // glm::vec3 h = glm::normalize(v + i);
+            // /* CHECK IF POINT ISN'T IN SHADOW */
+            // HitRec srec;
+            // if (!world->hit(Ray(rec.p, i), t0, t1, srec)) {
+            //     float lambert = glm::max(0.f, glm::dot(rec.normal, i)); 
+            //     float phong = glm::pow(glm::max(0.f, glm::dot(rec.normal, h)),
+            //                            32);
+            //     col += (l->intensity * m->color) * m->kd * lambert;
+            //     col += (l->intensity * m->color) * m->ks * phong;
+            // }
         }
         // reflect if needed
         if (m->km == 0 || depth == MAX_DEPTH) {
