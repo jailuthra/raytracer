@@ -91,7 +91,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
 
             /*Check if new reflected ray is above surface and calculate the color*/
             if(glm::dot(perturbReflectedDir, rec.normal) >= 0){
-                col += m->km * raycolor(Ray(rec.p, perturbReflectedDir),
+                col += m->km * raycolor(Ray(rec.p, perturbReflectedDir, eps()),
                                     1e-2, FLT_MAX);
             }
         }
@@ -106,13 +106,10 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
             glm::vec3 reflectDir = glm::reflect(d, n); //Get reflected component's direction
 
             glm::vec3 transmitDir(0.0);
-            float cos = 0.0f;
 
             /* Check if dielectric is entered */
             if(glm::dot(d, n) < 0){
                 transmitDir = glm::refract(d, n, 1.0f/m->eta); //Calculate transmitted ray direction
-                cos = glm::dot(-d, n); //Calculate cos(theta) b/w ray direction and normal
-
             }
             /*Check if dieletric is exited*/
             else{
@@ -121,17 +118,14 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                 /* Check for Total Internal Reflection 
                 * TIR if transmitted ray = 0
                 */
-                if(transmitDir != glm::vec3(0.0f)){ 
-                    cos = glm::dot(transmitDir, n);
-                }
-                else{
+                if (transmitDir == glm::vec3(0.0f)) { 
                     //TIR detected --> shoot ray in reflected ray direction
                     col = raycolor(Ray(rec.p, reflectDir), 1e-2, FLT_MAX); 
                     return glm::clamp(col, 0.0f, 1.0f);
                 }
             }
 
-            col = raycolor(Ray(rec.p, transmitDir), 1e-2, FLT_MAX);
+            col = raycolor(Ray(rec.p, transmitDir, eps()), 1e-2, FLT_MAX);
         }
 
         return glm::clamp(col, 0.0f, 1.0f);
