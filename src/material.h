@@ -11,6 +11,9 @@ struct Material
 	float ks; ///< Specular constant
 	float km; ///< Contribution from reflection
 	float kt; ///< Contribution from refraction
+
+	float a; ///< glossy reflections sample square width
+	float eta; ///< refractive index of material
 };
 
 #endif
