@@ -21,13 +21,13 @@ int main(int argc, char **argv)
     world->bgcol = glm::vec3(0.8f, 0.8f, 0.8f);
     
     Material *m = new Material;
-    m->color = glm::vec3(0.2, 0.8, 0.0);
+    m->color = glm::vec3(1.0, 1.0, 1.0);
     m->km = 0;
     m->ks = 0.3;
     m->ka = 0.1;
     m->kd = 0.6;
 
-    m->kt = 0.3;
+    m->kt = 1.0;
     m->eta = 1.5;
     
     Surface *sphere = new Sphere(glm::vec3(0.5f, -0.5, 0), 1.5, m);
@@ -45,6 +45,16 @@ int main(int argc, char **argv)
     Surface *sphere2 = new Sphere(glm::vec3(-2, -1.5, 2), 0.5, m2);
     world->addObject(sphere2);
 
+    Material *m3 = new Material;
+    m3->color = glm::vec3(0.1, 0.5, 0.1);
+    m3->km = 0;
+    m3->ks = 0.3;
+    m3->ka = 0.3;
+    m3->kd = 0.4;
+
+    Surface *sphere3 = new Sphere(glm::vec3(-0.5f, -1.0, -3), 1, m3);
+    world->addObject(sphere3);
+
     // Floor 
     Material *fm = new Material;
     fm->color = glm::vec3(0.2, 0.2, 0.2);
@@ -54,12 +64,12 @@ int main(int argc, char **argv)
     fm->kd = 0.7;
     fm->a = 0.05;
     Surface *floorTriangle1 = new Triangle(glm::vec3(-20,-2,40),
-                                  glm::vec3(-20,-2,-10),
+                                  glm::vec3(-20,-2,-40),
                                   glm::vec3(20,-2,40), fm);
 
     Surface *floorTriangle2 = new Triangle(glm::vec3(20,-2,40),
-                                  glm::vec3(-20,-2,-10),
-                                  glm::vec3(20,-2,-10), fm);
+                                  glm::vec3(-20,-2,-40),
+                                  glm::vec3(20,-2,-40), fm);
 
     world->addObject(floorTriangle1);
     world->addObject(floorTriangle2);

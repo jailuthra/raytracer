@@ -96,38 +96,45 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
             refract_depth = 0;
         }
         else{
-            glm::vec3 d = glm::normalize(ray.origin - rec.p);
+            glm::vec3 d = glm::normalize(ray.origin - rec.p); //Calculate ray direction
             glm::vec3 n = rec.normal;
 
-            glm::vec3 reflectDir = glm::reflect(-d, n);
+            glm::vec3 reflectDir = gl/m::reflect(-d, n); //Get reflected component's direction
 
             glm::vec3 transmitDir(0.0);
             float cos = 0.0f;
+
+            /* Check if dielectric is entered */
             if(glm::dot(d, n) > 0){
-                glm::vec3 transmitDir = glm::refract(-d, n, 1.0f/m->eta);
-                cos = glm::dot(d, n);
+                transmitDir = glm::refract(-d, n, m->eta); //Calculate transmitted ray direction
+                cos = glm::dot(d, n); //Calculate cos(theta) b/w ray direction and normal
 
             }
+
+            /*Check if dieletric is exited*/
             else{
-                transmitDir = glm::refract(-d, -n, m->eta);
-                if(transmitDir != glm::vec3(0.0)){
+                transmitDir = glm::refract(-d, -n, 1/m->eta); //Calculate transmitted ray direction while exiting
+                
+                /* Check for Total Internal Reflection 
+                * TIR if transmitted ray = 0
+                */
+                if(transmitDir != glm::vec3(0.0)){ 
                     cos = glm::dot(transmitDir, n);
                 }
                 else{
-                    col = m->kt * raycolor(Ray(rec.p, reflectDir), 1e-2, FLT_MAX);
+                    //TIR detected --> shoot ray in reflected ray direction
+                    col = raycolor(Ray(rec.p, reflectDir), 1e-2, FLT_MAX); 
                     return glm::clamp(col, 0.0f, 1.0f);
-
                 }
             }
 
+            /* Calculate reflectances for Schlick approximation*/
             float R0 = (m->eta - 1)*(m->eta - 1) / (m->eta + 1)*(m->eta + 1);
             float R = R0 + (1 - R0) * (glm::pow( 1 - cos, 5));
 
-            // glm::vec3 refractComp(0.2);
-            // glm::vec3 reflectComp(1.0);
-            glm::vec3 reflectComp = m->kt * R * raycolor(Ray(rec.p, reflectDir), 1e-2, FLT_MAX);
-
-            glm::vec3 refractComp = m->kt * (1 - R) * raycolor(Ray(rec.p, transmitDir), 1e-2, FLT_MAX);
+            /*Calculate reflected and refracted componenet using Schlick approximationo*/
+            glm::vec3 reflectComp = R * raycolor(Ray(rec.p, reflectDir), 1e-2, FLT_MAX);
+            glm::vec3 refractComp = (1 - R) * raycolor(Ray(rec.p, transmitDir), 1e-2, FLT_MAX);
 
             col = (reflectComp + refractComp);
             return glm::clamp(col, 0.0f, 1.0f);
