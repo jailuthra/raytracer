@@ -8,8 +8,10 @@ class Ray
 public:
     glm::vec3 origin;
     glm::vec3 dir;
-    Ray(const glm::vec3 &o, const glm::vec3 &d) : origin(o), dir(d)
+    float delT; ///< Time interval for Motion Blur
+    Ray(const glm::vec3 &o, const glm::vec3 &d, float delT = 0) : origin(o), dir(d), delT(delT)
     {}
+
 };
 
 #endif

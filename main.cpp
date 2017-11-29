@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     m2->ka = 0.3;
     m2->kd = 0.4;
 
-    Surface *sphere2 = new Sphere(glm::vec3(-2, -1.5, 2), 0.5, m2);
+    Surface *sphere2 = new Sphere(glm::vec3(-4, 0, 3), 2, m2, glm::vec3(-0.5, 0, 0));
     world->addObject(sphere2);
 
     Material *m3 = new Material;
@@ -63,76 +63,18 @@ int main(int argc, char **argv)
     fm->ka = 0.1;
     fm->kd = 0.7;
     fm->a = 0.05;
-    Surface *floorTriangle1 = new Triangle(glm::vec3(-20,-2,40),
-                                  glm::vec3(-20,-2,-40),
-                                  glm::vec3(20,-2,40), fm);
+    Surface *floorTriangle1 = new Triangle(glm::vec3(-200,-2,800),
+                                  glm::vec3(-200,-2,-800),
+                                  glm::vec3(200,-2,800), fm);
 
-    Surface *floorTriangle2 = new Triangle(glm::vec3(20,-2,40),
-                                  glm::vec3(-20,-2,-40),
-                                  glm::vec3(20,-2,-40), fm);
+    Surface *floorTriangle2 = new Triangle(glm::vec3(200,-2,800),
+                                  glm::vec3(-200,-2,-800),
+                                  glm::vec3(200,-2,-800), fm);
 
     world->addObject(floorTriangle1);
     world->addObject(floorTriangle2);
 
-/*    Material *wm1 = new Material;
-    wm1->color = glm::vec3(0.4, 0.4, 0.4);
-    wm1->km = 0;
-    wm1->ks = 0.0;
-    wm1->ka = 0.3;
-    wm1->kd = 0.7;
-    wm1->a = 0;
-
-    Material *wm2 = new Material;
-    wm2->color = glm::vec3(0.7, 0.7, 0.2);
-    wm2->km = 0.5;
-    wm2->ks = 0.2;
-    wm2->ka = 0.1;
-    wm2->kd = 0.7;
-    wm2->a = 0.10;*/
-
-/*    Surface *leftface1 = new Triangle(glm::vec3(-20,10,40),
-                                  glm::vec3(-20,10,-10),
-                                  glm::vec3(-20,-2,40), wm1);
-    Surface *leftface2 = new Triangle(glm::vec3(-20,10,-10),
-                                  glm::vec3(-20,-2,-10),
-                                  glm::vec3(-20,-2,40), wm1); 
-
-    world->addObject(leftface1);
-    world->addObject(leftface2);
-
-    Surface *rightface1 = new Triangle(glm::vec3(20,10,-10),
-                                  glm::vec3(20,-2,40),
-                                  glm::vec3(20,-2,-10), wm1);
-    Surface *rightface2 = new Triangle(glm::vec3(20,10,-10),
-                                  glm::vec3(20,10,40),
-                                  glm::vec3(20,-2,40), wm1); 
-
-    world->addObject(rightface1);
-    world->addObject(rightface2);*/
-
-/*    Surface *topface1 = new Triangle(glm::vec3(10,10,-10),
-                                  glm::vec3(-10,10,40),
-                                  glm::vec3(10,10,40), wm1);
-    Surface *topface2 = new Triangle(glm::vec3(-10,10,40),
-                                  glm::vec3(10,10,-10),
-                                  glm::vec3(-10,10,-10), wm1);
-
-
-    world->addObject(topface1);
-    world->addObject(topface2);
-
-    Surface *frontface1 = new Triangle(glm::vec3(-10,10,-10),
-                                  glm::vec3(10,10,-10),
-                                  glm::vec3(10,-2,-10), wm2);
-    Surface *frontface2 = new Triangle(glm::vec3(-10,10,-10),
-                                  glm::vec3(10,-2,-10),
-                                  glm::vec3(-10,-2,-10), wm2);
-
-
-    world->addObject(frontface1);
-    world->addObject(frontface2);*/
-
-
+    /* LIGHT SOURCES */
 
     LightSrc *light = new LightSrc;
     light->pos = glm::vec3(6, 8, 10);

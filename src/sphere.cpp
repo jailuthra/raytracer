@@ -2,15 +2,21 @@
 #include "hitrec.h"
 #include <glm/glm.hpp>
 
-bool Sphere::hit(const Ray &ray, double t0, double t1, HitRec &hr) {
+bool Sphere::hit(const Ray &ray, double t0, double t1, HitRec &hr)
+{
+    if (this->velocity != glm::vec3(0.0f)) {
+        movedPos = pos + ray.delT * velocity;
+    } else {
+        movedPos = pos;
+    }
 
-    glm::vec3 centerVec = ray.origin - pos;
-    double A = 1.0; // glm::dot(ray.dir, ray.dir)
+    glm::vec3 centerVec = ray.origin - movedPos;
+    double A = glm::dot(ray.dir, ray.dir);
     double B = 2 * glm::dot(ray.dir, centerVec);
     double C = glm::dot(centerVec, centerVec) - radius*radius;
     double Discriminant = B*B - 4.0*A*C;
 
-    bool stat = false;
+    bool ret = false;
 
     if(Discriminant == 0.0){
         double t;
@@ -21,7 +27,7 @@ bool Sphere::hit(const Ray &ray, double t0, double t1, HitRec &hr) {
             hr.t = t;
             hr.s = this;
         }
-        stat = true;
+        ret = true;
     }
 
     else if(Discriminant > 0.0){
@@ -35,14 +41,14 @@ bool Sphere::hit(const Ray &ray, double t0, double t1, HitRec &hr) {
             hr.hit = true;
             hr.t = t;
             hr.s = this;
-            stat = true;
+            ret = true;
         }
     }
 
-    return stat;
+    return ret;
 }
 
 glm::vec3 Sphere::getNormal(glm::vec3 hitpoint) const {
-    glm::vec3 normal = glm::normalize(hitpoint - pos);
+    glm::vec3 normal = glm::normalize(hitpoint - movedPos);
     return normal;
 }
