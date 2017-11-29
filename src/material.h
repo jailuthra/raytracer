@@ -9,8 +9,8 @@ struct Material
 	float ka; ///< Ambient contribution
 	float kd; ///< Diffuse constant
 	float ks; ///< Specular constant
-	float km; ///< Contribution from reflection
-	float kt; ///< Contribution from refraction
+	float km = 0.0; ///< Contribution from reflection
+	float kt = 0.0; ///< Contribution from refraction
 
 	float a; ///< glossy reflections sample square width
 	float eta; ///< refractive index of material

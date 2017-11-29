@@ -28,7 +28,7 @@ glm::vec3 Renderer::shade(int i, int j)
 glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
 {
     static int depth = 0; // used for reflections
-    static int refract_depth = 0;
+    static int refract_depth = 0; // used for refractions
 
     HitRec rec;
     glm::vec3 col(0); // return color
@@ -39,7 +39,6 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
         rec.normal = glm::normalize(rec.s->getNormal(rec.p)); // normal
         glm::vec3 v = glm::normalize(ray.origin - rec.p); // view vector
         col += m->ka * m->color; // ambient
-
 
         for (LightSrc *l: world->sources) {
             /* SOFT SHADOWS */
@@ -63,10 +62,12 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
             shadowCol /= 4; // Divide total shadow color by number of light sources
             col += shadowCol;
         }
+
         // reflect if needed
         if (m->km == 0 || depth == MAX_DEPTH) {
             depth = 0;
         } else {
+            depth++;
             glm::vec3 reflectedDir = glm::reflect(-v, rec.normal); //Reflected ray direction
 
             /*Create orthonormal basis with w = reflected ray*/
@@ -90,35 +91,33 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                                     1e-2, FLT_MAX);
             }
         }
-        depth++;
 
         if(m->kt == 0 || refract_depth == MAX_DEPTH) {
             refract_depth = 0;
-        }
-        else{
-            glm::vec3 d = glm::normalize(ray.origin - rec.p); //Calculate ray direction
+        } else {
+            refract_depth++; 
+            glm::vec3 d = glm::normalize(rec.p - ray.origin); //Calculate ray direction
             glm::vec3 n = rec.normal;
 
-            glm::vec3 reflectDir = gl/m::reflect(-d, n); //Get reflected component's direction
+            glm::vec3 reflectDir = glm::reflect(d, n); //Get reflected component's direction
 
             glm::vec3 transmitDir(0.0);
             float cos = 0.0f;
 
             /* Check if dielectric is entered */
-            if(glm::dot(d, n) > 0){
-                transmitDir = glm::refract(-d, n, m->eta); //Calculate transmitted ray direction
-                cos = glm::dot(d, n); //Calculate cos(theta) b/w ray direction and normal
+            if(glm::dot(d, n) < 0){
+                transmitDir = glm::refract(d, n, 1.0f/m->eta); //Calculate transmitted ray direction
+                cos = glm::dot(-d, n); //Calculate cos(theta) b/w ray direction and normal
 
             }
-
             /*Check if dieletric is exited*/
             else{
-                transmitDir = glm::refract(-d, -n, 1/m->eta); //Calculate transmitted ray direction while exiting
+                transmitDir = glm::refract(d, -n, m->eta); //Calculate transmitted ray direction while exiting
                 
                 /* Check for Total Internal Reflection 
                 * TIR if transmitted ray = 0
                 */
-                if(transmitDir != glm::vec3(0.0)){ 
+                if(transmitDir != glm::vec3(0.0f)){ 
                     cos = glm::dot(transmitDir, n);
                 }
                 else{
@@ -128,18 +127,8 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                 }
             }
 
-            /* Calculate reflectances for Schlick approximation*/
-            float R0 = (m->eta - 1)*(m->eta - 1) / (m->eta + 1)*(m->eta + 1);
-            float R = R0 + (1 - R0) * (glm::pow( 1 - cos, 5));
-
-            /*Calculate reflected and refracted componenet using Schlick approximationo*/
-            glm::vec3 reflectComp = R * raycolor(Ray(rec.p, reflectDir), 1e-2, FLT_MAX);
-            glm::vec3 refractComp = (1 - R) * raycolor(Ray(rec.p, transmitDir), 1e-2, FLT_MAX);
-
-            col = (reflectComp + refractComp);
-            return glm::clamp(col, 0.0f, 1.0f);
+            col = raycolor(Ray(rec.p, transmitDir), 1e-2, FLT_MAX);
         }
-        refract_depth++; 
 
         return glm::clamp(col, 0.0f, 1.0f);
     }

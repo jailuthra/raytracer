@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     m->kd = 0.6;
 
     m->kt = 1.0;
-    m->eta = 1.5;
+    m->eta = 1.15;
     
     Surface *sphere = new Sphere(glm::vec3(0.5f, -0.5, 0), 1.5, m);
     //Object *triangle = new Triangle(Vector3D(2,0,0), Vector3D(-1,0,4), Vector3D(0,3,0), m);
