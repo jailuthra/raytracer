@@ -20,20 +20,7 @@ int main(int argc, char **argv)
     World *world = new World;
     world->bgcol = glm::vec3(0.8f, 0.8f, 0.8f);
 
-     //Sample Sphere for Results
-    Material *m_sample = new Material;
-    m_sample->color = glm::vec3(0.6, 0.2, 0.2);
-    m_sample->km = 0;
-    m_sample->ks = 0.3;
-    m_sample->ka = 0.2;
-    m_sample->kd = 0.5;
-    m_sample->a = 0.05;
-    // m_sample->kt = 1.0;
-    // m_sample->eta = 1.15;
-
-    Surface *sample_sphere = new Sphere(glm::vec3(0.0f, 2.0f, 1.0f), 4, m_sample);
-    // world->addObject(sample_sphere);
-    
+    // Objects
     Material *m = new Material;
     m->color = glm::vec3(1.0, 1.0, 1.0);
     m->km = 0.0;
@@ -73,8 +60,6 @@ int main(int argc, char **argv)
     Surface *sphere3 = new Sphere(glm::vec3(5, 3, -2), 5, m3);
     world->addObject(sphere3);
 
-
-
     // Floor 
     Material *fm = new Material;
     fm->color = glm::vec3(0.2, 0.2, 0.2);
@@ -110,6 +95,7 @@ int main(int argc, char **argv)
     light2->b = glm::vec3(0, 2, 0);
     world->addSource(light2);
 
+    /* Render */
     Renderer *engine = new Renderer(world, camera, true);
     char *fn = (char *) "out.ppm";
     if (argc > 1) {

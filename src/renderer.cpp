@@ -7,15 +7,15 @@
 glm::vec3 Renderer::shade(int i, int j)
 {
     glm::vec3 dir, col = glm::vec3(0);
-    float delT;
+    float delT; // time interval used for motion blur
     if (antialiase) {
         for (int p = 0; p < 4; p++) {
             for (int q = 0; q < 4; q++) {
                 dir = camera->getRayDir(i + (p + eps())/4,
                                         j + (q + eps())/4); // direction of ray for AA
-                delT = ((4*p + q) + eps())/16; // time interval of ray for Motion Blur
+                delT = ((4*p + q) + eps())/16; // set time interval from uniform grid [0,1]/16
                 Ray ray(camera->getPos(), dir, delT);
-                col += raycolor(ray, EPSILON, FLT_MAX);
+                col += raycolor(ray, EPSILON, FLT_MAX); // call recursive raytracer
             }
         }
         col /= 16;
@@ -53,6 +53,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                     glm::vec3 h = glm::normalize(v + i); // half view ray for phong
                     HitRec srec;
                     if (!world->hit(Ray(rec.p, i), t0, t1, srec)) { // if point isn't in shadow
+                        // phong shading
                         float lambert = glm::max(0.f, glm::dot(rec.normal, i)); 
                         float phong = glm::pow(glm::max(0.f, glm::dot(rec.normal, h)),
                                                32);
@@ -65,7 +66,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
             col += shadowCol;
         }
 
-        // reflect if needed
+        /* REFLECTION */
         if (m->km == 0 || depth == MAX_DEPTH) {
             depth = 0;
         } else {
@@ -93,7 +94,8 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                                     1e-2, FLT_MAX);
             }
         }
-
+        
+        /* REFRACTION */
         if(m->kt == 0 || refract_depth == MAX_DEPTH) {
             refract_depth = 0;
         } else {
@@ -114,10 +116,8 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
             /*Calculate perturbed ray direction*/
             d = glm::normalize(d + (u * sampleX) + (v * sampleY));
 
-            glm::vec3 n = rec.normal;
-
+            glm::vec3 n = rec.normal; 
             glm::vec3 reflectDir = glm::reflect(d, n); //Get reflected component's direction
-
             glm::vec3 transmitDir(0.0);
 
             /* Check if dielectric is entered */
@@ -137,7 +137,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                     return glm::clamp(col, 0.0f, 1.0f);
                 }
             }
-
+            // recursive call from refracted ray
             col = m->kt * raycolor(Ray(rec.p, transmitDir, ray.delT), 1e-2, FLT_MAX) + (1 - m->kt) * col;
         }
 
