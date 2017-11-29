@@ -22,12 +22,12 @@ int main(int argc, char **argv)
     
     Material *m = new Material;
     m->color = glm::vec3(1.0, 1.0, 1.0);
-    m->km = 0;
+    m->km = 0.1;
     m->ks = 0.3;
     m->ka = 0.1;
     m->kd = 0.6;
-
-    m->kt = 1.0;
+    m->a = 0.05;
+    m->kt = 0.5;
     m->eta = 1.15;
     
     Surface *sphere = new Sphere(glm::vec3(0.5f, -0.5, 0), 1.5, m);

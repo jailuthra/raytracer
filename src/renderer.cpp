@@ -9,18 +9,16 @@ glm::vec3 Renderer::shade(int i, int j)
     glm::vec3 dir, col = glm::vec3(0);
     float delT;
     if (antialiase) {
-        for (int p = 0; p < 3; p++) {
-            for (int q = 0; q < 3; q++) {
-                dir = camera->getRayDir(i + (p + eps())/3,
-                                        j + (q + eps())/3); // direction of ray for AA
-                for (int r = 0; r < 2; r++) {
-                    delT = eps(); // time interval of ray for Motion Blur
-                    Ray ray(camera->getPos(), dir, delT);
-                    col += raycolor(ray, EPSILON, FLT_MAX);
-                }
+        for (int p = 0; p < 4; p++) {
+            for (int q = 0; q < 4; q++) {
+                dir = camera->getRayDir(i + (p + eps())/4,
+                                        j + (q + eps())/4); // direction of ray for AA
+                delT = ((4*p + q) + eps())/16; // time interval of ray for Motion Blur
+                Ray ray(camera->getPos(), dir, delT);
+                col += raycolor(ray, EPSILON, FLT_MAX);
             }
         }
-        col /= 18;
+        col /= 16;
     } else {
         dir = camera->getRayDir(i, j);
         Ray ray(camera->getPos(), dir);
@@ -91,7 +89,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
 
             /*Check if new reflected ray is above surface and calculate the color*/
             if(glm::dot(perturbReflectedDir, rec.normal) >= 0){
-                col += m->km * raycolor(Ray(rec.p, perturbReflectedDir, eps()),
+                col += m->km * raycolor(Ray(rec.p, perturbReflectedDir, ray.delT),
                                     1e-2, FLT_MAX);
             }
         }
@@ -101,6 +99,21 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
         } else {
             refract_depth++; 
             glm::vec3 d = glm::normalize(rec.p - ray.origin); //Calculate ray direction
+
+            // Transluency
+            /*Create orthonormal basis with w = reflected ray*/
+            glm::vec3 w = glm::normalize(d);
+            glm::vec3 t = glm::vec3(w.x, w.y, w.z + 1.0f); //Pick random vector not collinear with w
+            glm::vec3 u = glm::normalize(glm::cross(t, w));
+            glm::vec3 v = glm::normalize(glm::cross(w, u));
+
+            /*Choose random point (sampleX,sampleY) on square*/
+            float sampleX = -(m->a/2) + ((0.8 * ray.delT + 0.2 * eps()) * m->a);
+            float sampleY = -(m->a/2) + ((0.8 * ray.delT + 0.2 * eps()) * m->a);
+
+            /*Calculate perturbed ray direction*/
+            d = glm::normalize(d + (u * sampleX) + (v * sampleY));
+
             glm::vec3 n = rec.normal;
 
             glm::vec3 reflectDir = glm::reflect(d, n); //Get reflected component's direction
@@ -125,7 +138,7 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
                 }
             }
 
-            col = raycolor(Ray(rec.p, transmitDir, eps()), 1e-2, FLT_MAX);
+            col = m->kt * raycolor(Ray(rec.p, transmitDir, ray.delT), 1e-2, FLT_MAX) + (1 - m->kt) * col;
         }
 
         return glm::clamp(col, 0.0f, 1.0f);
