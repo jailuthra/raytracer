@@ -19,6 +19,20 @@ int main(int argc, char **argv)
     // World
     World *world = new World;
     world->bgcol = glm::vec3(0.8f, 0.8f, 0.8f);
+
+        //Sample Sphere for Results
+    Material *m_sample = new Material;
+    m_sample->color = glm::vec3(0.6, 0.2, 0.2);
+    m_sample->km = 0;
+    m_sample->ks = 0.3;
+    m_sample->ka = 0.2;
+    m_sample->kd = 0.5;
+    m_sample->a = 0.05;
+    // m_sample->kt = 1.0;
+    // m_sample->eta = 1.15;
+
+    Surface *sample_sphere = new Sphere(glm::vec3(0.0f, 2.0f, 1.0f), 4, m_sample);
+    world->addObject(sample_sphere);
     
     Material *m = new Material;
     m->color = glm::vec3(1.0, 1.0, 1.0);
@@ -31,9 +45,7 @@ int main(int argc, char **argv)
     m->eta = 1.15;
     
     Surface *sphere = new Sphere(glm::vec3(0.5f, -0.5, 0), 1.5, m);
-    //Object *triangle = new Triangle(Vector3D(2,0,0), Vector3D(-1,0,4), Vector3D(0,3,0), m);
-    world->addObject(sphere);
-    //world->addObject(triangle);
+    // world->addObject(sphere);
 
     Material *m2 = new Material;
     m2->color = glm::vec3(0.8, 0.1, 0.2);
@@ -43,7 +55,7 @@ int main(int argc, char **argv)
     m2->kd = 0.4;
 
     Surface *sphere2 = new Sphere(glm::vec3(-4, 0, 3), 2, m2, glm::vec3(-0.5, 0, 0));
-    world->addObject(sphere2);
+    // world->addObject(sphere2);
 
     Material *m3 = new Material;
     m3->color = glm::vec3(0.1, 0.5, 0.1);
@@ -53,7 +65,7 @@ int main(int argc, char **argv)
     m3->kd = 0.4;
 
     Surface *sphere3 = new Sphere(glm::vec3(-0.5f, -1.0, -3), 1, m3);
-    world->addObject(sphere3);
+    // world->addObject(sphere3);
 
     // Floor 
     Material *fm = new Material;
