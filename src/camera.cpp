@@ -17,6 +17,11 @@ Camera::Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up,
     focalDistance = 1.0f/(2.0f * glm::tan(glm::radians(this->fov_y / 2.0f)));
 }
 
+Camera::Camera(const Camera &c, int width, int height) :
+                    Camera(c.pos, c.target, c.up, c.fov_y, width, height)
+{
+}
+
 glm::vec3 Camera::getRayDir(float i, float j) const
 {
     float z = focalDistance;

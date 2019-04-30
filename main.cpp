@@ -3,11 +3,15 @@
 #include "src/camera.h"
 #include "src/sphere.h"
 #include "src/triangle.h"
+#include "src/fovea.h"
 #include <glm/vec3.hpp>
 
 int main(int argc, char **argv)
 {
-    int screen_width = 800, screen_height = 600;
+    int screen_width = 800, screen_height = 800;
+    // Fovea
+    glm::vec2 eye_pos = glm::vec2(0.5, 0.5);
+    Fovea *fovea = new Fovea(eye_pos, 0.1, 0.3, 0.1);
 
     // Camera
     glm::vec3 camera_position(0, 10, 20);
@@ -96,7 +100,7 @@ int main(int argc, char **argv)
     world->addSource(light2);
 
     /* Render */
-    Renderer *engine = new Renderer(world, camera, true);
+    Renderer *engine = new Renderer(world, camera, fovea, true);
     char *fn = (char *) "out.ppm";
     if (argc > 1) {
         fn = argv[1];     

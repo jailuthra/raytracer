@@ -35,6 +35,3 @@ set(SOURCE_FILES main.cpp ${SRC_CPP} ${SRC_HDR})
 add_executable(${AssignmentNameHere} ${SOURCE_FILES}) 
 target_link_libraries(${AssignmentNameHere} ${PLATFORM_LINK})
 
-pre_build(${AssignmentNameHere}
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/bin/Resources
-        COMMAND ${CMAKE_COMMAND} -E copy_directory   ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${CMAKE_CURRENT_SOURCE_DIR}/bin/Resources)

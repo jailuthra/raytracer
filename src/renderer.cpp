@@ -150,12 +150,60 @@ glm::vec3 Renderer::raycolor(Ray ray, double t0, double t1)
     }
 }
 
-void Renderer::render(const char *filename)
+void Renderer::shader()
 {
-    for (int j = 0; j < camera->height; j++) {
-        for (int i = 0; i < camera->width; i++) {
-            pixmap[i + j*camera->width] = shade(i, j);
+    if (fovea) {
+        // find out pixels that need to be shaded using RT wrt Foveal regions
+        for (int j = 0; j < camera->height; j++) {
+            for (int i = 0; i < camera->width; i++) {
+                shademap[i + j*camera->width] = fovea->sample(i, j, camera->width, camera->height);
+            }
+        }
+        // shade pixels using raytracer
+        for (int j = 0; j < camera->height; j++) {
+            for (int i = 0; i < camera->width; i++) {
+                if (shademap[i + j*camera->width]) {
+                    pixmap[i + j*camera->width] = shade(i, j);
+                } else {
+                    pixmap[i + j*camera->width] = glm::vec3(0);
+                }
+            }
+        }
+        // shade unshaded pixels using a smaller image or neighbours
+        Camera *camera2 = new Camera(*camera, camera->width/4, camera->height/4);
+        Renderer *r = new Renderer(world, camera2, NULL, false);
+        r->shader();
+        glm::vec3 *pixmap2 = r->pixmap;
+        for (int j = 0; j < camera->height; j++) {
+            for (int i = 0; i < camera->width; i++) {
+                if (shademap[i + j*camera->width] == false) {
+                    if (shademap[(i-1) + j*camera->width] &&
+                        shademap[(i+1) + j*camera->width] &&
+                        shademap[i + (j-1)*camera->width] &&
+                        shademap[i + (j+1)*camera->width]) {
+                        pixmap[i + j*camera->width] = (pixmap[(i-1) + j*camera->width] +
+                                                       pixmap[(i+1) + j*camera->width] +
+                                                       pixmap[i + (j-1)*camera->width] +
+                                                       pixmap[i + (j+1)*camera->width]) / 4.0f;
+                    }
+                    else {
+                        pixmap[i + j*camera->width] = pixmap2[i/4 + (j/4)*camera2->width];
+                    }
+                }
+            }
+        }
+    } else {
+        // shade all pixels using raytracer
+        for (int j = 0; j < camera->height; j++) {
+            for (int i = 0; i < camera->width; i++) {
+                    pixmap[i + j*camera->width] = shade(i, j);
+            }
         }
     }
+}
+
+void Renderer::render(const char *filename)
+{
+    shader();
     makePPM(filename, pixmap, camera->width, camera->height);
 }
